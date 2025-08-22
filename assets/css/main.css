@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Hace que el tamaño de los elementos incluya el padding y border */
+
+/*    border: 1px black dotted; */
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    background-color: beige;
+}
+
+.main-header_container{
+    margin:0%;
+    padding: 0%;
+}
+
+.main-header_container, .chart_container_header {
+    background-color: rgb(71, 38, 14);
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+
+}
+
+button{
+    border-radius: 10px;    
+    border-style: none;
+    margin-left: .25rem;
+    margin-right: .25rem;
+    cursor: pointer;
+}
+
+.add_button{
+    background-color: #6B8E23; /* Verde oliva, contraste natural */
+    color: #fff; /* Texto blanco para legibilidad */
+    padding: .3rem 1.4rem;
+    font-size: large;
+}
+
+.remove_button{
+    background-color: #B22222; /* Rojo fuego */
+    color: #fff;
+    padding: 0 .5rem;
+}
+
+.body_container{    
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); /* columnas flexibles */
+    grid-auto-rows: 1fr; /* filas iguales de altura automática */
+    gap: 10px;
+    padding: 1rem;
+    width: 100%;
+    height: 100%; /* que tome toda la altura del contenedor */
+}
+
+.body_container .chart_container {
+    background-color: #fff;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    height: 100%; /* altura total disponible en la fila */
+}
+
+.chart_container{
+    background-color: #fff; /* Fondo claro para destacar contenido */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chart_container, .chart_container_header {
+    border-radius: .5rem .5rem 0 0;   
+}
+
+.chart_container_header{
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.chart_container_body{
+    margin: .25rem 0;
+    height: 10rem;    
+}
+
+.chart_container_footer{
+    text-align: right;
+    padding-right: .5rem;
+    margin: .25rem 0;
+}

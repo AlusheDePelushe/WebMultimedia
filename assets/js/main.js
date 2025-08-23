@@ -1,3 +1,4 @@
+
 const addButton = document.querySelector('.add_button');
 let tarjeta = 0;
 

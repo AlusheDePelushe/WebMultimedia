@@ -81,10 +81,15 @@ button{
 .chart_container_body{
     margin: .25rem 0;
     height: 10rem;    
+    padding: 0 .5rem;
 }
 
 .chart_container_footer{
     text-align: right;
     padding-right: .5rem;
     margin: .25rem 0;
+}
+
+.chart_container_footer button{
+    border-radius: 0;
 }

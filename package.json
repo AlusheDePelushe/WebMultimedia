@@ -1,0 +1,19 @@
+{
+  "name": "web-multimedia",
+  "version": "1.0.0",
+  "description": "Desarrollo de monitor de red",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlusheDePelushe/WebMultimedia.git"
+  },
+  "author": "Jesús Contreras",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlusheDePelushe/WebMultimedia/issues"
+  },
+  "homepage": "https://github.com/AlusheDePelushe/WebMultimedia#readme"
+}

@@ -1,9 +1,9 @@
-
 const addButton = document.querySelector('.add_button');
-let tarjeta = 0;
+let tarjeta = 1;
 
 addButton.addEventListener('click', async () => {
   const ip = prompt("Introduce la dirección IP del dispositivo:");
+  
   if (ip) {
     // 1️⃣ Insertar primero la tarjeta desde el partial
     const response = await fetch("partials/card.html");

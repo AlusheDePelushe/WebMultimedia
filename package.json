@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/AlusheDePelushe/WebMultimedia/issues"
   },
-  "homepage": "https://github.com/AlusheDePelushe/WebMultimedia#readme"
+  "homepage": "https://github.com/AlusheDePelushe/WebMultimedia#readme",
+  "dependencies": {
+    "chart.js": "^4.5.0"
+  }
 }

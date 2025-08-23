@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/AlusheDePelushe/WebMultimedia#readme",
   "dependencies": {
-    "chart.js": "^4.5.0"
-  }
+    "chart.js": "^4.5.0",
+    "express": "^5.1.0"
+  },
+  "keywords": []
 }

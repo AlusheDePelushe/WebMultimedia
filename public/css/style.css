@@ -116,3 +116,31 @@ button{
 .chart_container_footer button{
     border-radius: 0;
 }
+
+/* Media Querys */
+
+@media (max-width: 600px) {
+    .body_container {
+        grid-template-columns: 1fr; /* Solo una columna */
+        padding: 0.5rem;
+    }
+
+    .chart_container_body canvas {
+        width: 65% !important; /* Se puede ajustar según se vea */
+        height: 100% !important;
+    }
+
+    .semaforo {
+        width: 100px;
+        height: 100px;
+    }
+
+    .chart_container_footer {
+        padding-right: 0.25rem;
+    }
+
+    .add_button {
+        padding: 0.3rem 1rem;
+        font-size: medium;
+    }
+}

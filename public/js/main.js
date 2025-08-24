@@ -1,3 +1,4 @@
+// Función para obtener ping
 async function getPing(ip) {
   try {
     const response = await fetch('http://localhost:3000/ping', {
@@ -6,12 +7,21 @@ async function getPing(ip) {
       body: JSON.stringify({ ip })
     });
     const data = await response.json();
-    // Si devuelve null o error, ponemos 999 para indicar fallo
-    return data.time !== null ? data.time : 999;
+    // Retornamos un objeto con alive y time
+    return {
+      alive: data.alive,
+      time: data.time !== null ? data.time : 999
+    };
   } catch (err) {
     console.error('Error ping:', err);
-    return 999;
+    return { alive: false, time: 999 };
   }
+}
+
+// Validación IPv4
+function isValidIP(ip) {
+  const ipv4Regex = /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/;
+  return ipv4Regex.test(ip);
 }
 
 const addButton = document.querySelector('.add_button');
@@ -21,12 +31,18 @@ addButton.addEventListener('click', async () => {
   const ip = prompt("Introduce la dirección IP o hostname del servidor:");
   if (!ip) return alert("No se ingresó ninguna IP.");
 
+  if (!isValidIP(ip)) {
+    alert("Dirección IP inválida. Debe tener el formato XXX.XXX.XXX.XXX");
+    return;
+  }
+
   // 1️⃣ Insertar tarjeta
   const response = await fetch("partials/card.html");
   const template = await response.text();
   document.querySelector(".body_container").insertAdjacentHTML("beforeend", template);
 
-  document.getElementsByClassName('chart_container_header')[tarjeta].innerHTML = `ping: ${ip}`;
+  const header = document.getElementsByClassName('chart_container_header')[tarjeta];
+  header.innerHTML = `ping: ${ip} | Estado: ...`;
 
   const container = document.getElementsByClassName('chart_container_body')[tarjeta];
   const canvas = container.querySelector("canvas");
@@ -56,23 +72,38 @@ addButton.addEventListener('click', async () => {
   // 2️⃣ Ping en vivo
   let time = 0;
   const interval = setInterval(async () => {
-    const latency = await getPing(ip);
+    const result = await getPing(ip); // { alive, time }
     time++;
 
-    chart.data.labels.push(`${time}s`);
-    chart.data.datasets[0].data.push(latency);
+    chart.data.labels.push(`${result.time} ms`);
+    chart.data.datasets[0].data.push(result.time);
 
     // Mantener últimos 20 puntos
-    if (chart.data.labels.length > 20) {
+    if (chart.data.labels.length > 15) {
       chart.data.labels.shift();
       chart.data.datasets[0].data.shift();
     }
     chart.update();
 
     // Semáforo según latencia
-    if (latency <= 350) semaforo.style.backgroundColor = "green";
-    else if (latency > 350 && latency <= 800) semaforo.style.backgroundColor = "yellow";
-    else semaforo.style.backgroundColor = "red";
+    if (!result.alive) {
+        semaforo.style.backgroundColor = "red"; // no disponible = rojo
+    } else if (result.time <= 350) {
+        semaforo.style.backgroundColor = "green";
+    } else if (result.time > 350 && result.time <= 800) {
+        semaforo.style.backgroundColor = "yellow";
+    } else {
+        semaforo.style.backgroundColor = "orange"; // latencia alta
+    }
+
+    // Actualizar header con disponibilidad
+    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"}`;
+
+ if (!result.alive) {
+    header.style.backgroundColor = "red"; // No disponible
+} else {
+    header.style.backgroundColor = "rgb(71, 38, 14)"; // color original si está disponible
+}
 
   }, 1000);
 

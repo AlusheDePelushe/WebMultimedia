@@ -32,5 +32,8 @@ app.post('/ping', async (req, res) => {
     }
 });
 
+
 const port = 3000;
 app.listen(port, () => console.log(`Servidor ping corriendo en http://localhost:${port}`));
+
+//app.listen(port, '0.0.0.0', () => console.log(`Servidor corriendo en http://<IP>:${port}`));

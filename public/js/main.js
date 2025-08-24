@@ -97,12 +97,17 @@ addButton.addEventListener('click', async () => {
     }
 
     // Actualizar header con disponibilidad
-    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"}`;
+    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible ⚠️"}`;
 
  if (!result.alive) {
     header.style.backgroundColor = "red"; // No disponible
 } else {
     header.style.backgroundColor = "rgb(71, 38, 14)"; // color original si está disponible
+}
+
+//Notificación Telegram si no está disponible
+  if (result.time === 999) {  
+  await sendTelegramMessage(`⚠️ La IP ${ip} no responde. Red caída o inaccesible.`);  
 }
 
   }, 1000);

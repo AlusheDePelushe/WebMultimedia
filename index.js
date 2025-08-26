@@ -1,8 +1,9 @@
 import express from 'express';
-import {dirname} from 'path';
-import {fileURLToPath} from 'url';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 import ping from 'ping';
+import axios from 'axios';   // 👈 Import correcto para Telegram
 
 const app = express();
 app.use(cors());
@@ -15,29 +16,35 @@ app.use(express.static(__dirname + '/public'));
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
-<<<<<<< HEAD
-// Endpoint para ping
-=======
 // --- Endpoint de ping ---
->>>>>>> d424225 (MVP Final2)
 app.post('/ping', async (req, res) => {
-    const { ip } = req.body;
-    if (!ip) return res.status(400).json({ error: 'No IP provided' });
+  const { ip } = req.body;
+  if (!ip) return res.status(400).json({ error: 'No IP provided' });
 
-    try {
-        const result = await ping.promise.probe(ip);
-        const latency = result.time === 'unknown' ? null : parseFloat(result.time);
-        res.json({ alive: result.alive, time: latency });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+  try {
+    const result = await ping.promise.probe(ip);
+    const latency = result.time === 'unknown' ? null : parseFloat(result.time);
+
+/*    // 🚨 Aviso en Telegram si la IP no responde
+    if (!result.alive) {
+      await sendTelegramMessage(`⚠️ La IP ${ip} no responde. Posible caída de red.`);
     }
+*/
+    res.json({ alive: result.alive, time: latency });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-
+// --- Iniciar servidor ---
 const port = 3000;
-app.listen(port, () => console.log(`Servidor ping corriendo en http://localhost:${port}`));
+app.listen(port, () => {
+  console.log(`Servidor ping corriendo en http://localhost:${port}`);
+  //sendTelegramMessage("🚀 Servidor iniciado correctamente");
+});
 
-//app.listen(port, '0.0.0.0', () => console.log(`Servidor corriendo en http://<IP>:${port}`));
+// Opción si quieres exponer en toda la red
+// app.listen(port, '0.0.0.0', () => console.log(`Servidor corriendo en http://<IP>:${port}`));

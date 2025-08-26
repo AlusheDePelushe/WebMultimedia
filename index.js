@@ -18,7 +18,11 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+<<<<<<< HEAD
 // Endpoint para ping
+=======
+// --- Endpoint de ping ---
+>>>>>>> d424225 (MVP Final2)
 app.post('/ping', async (req, res) => {
     const { ip } = req.body;
     if (!ip) return res.status(400).json({ error: 'No IP provided' });

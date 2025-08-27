@@ -36,6 +36,8 @@ addButton.addEventListener('click', async () => {
     return;
   }
 
+  const ipNombre = prompt("Ingresa el nombre del servidor (opcional):");
+
   // 1️⃣ Insertar tarjeta
   const response = await fetch("partials/card.html");
   const template = await response.text();
@@ -97,7 +99,7 @@ addButton.addEventListener('click', async () => {
     }
 
     // Actualizar header con disponibilidad
-    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"}`;
+    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"} | ${ipNombre} `;
 
  if (!result.alive) {
     header.style.backgroundColor = "red"; // No disponible

@@ -1,13 +1,14 @@
 // Función para obtener ping
 async function getPing(ip) {
   try {
-    const response = await fetch('http://localhost:3000/ping', {
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+
+    const response = await fetch(`${baseUrl}/ping`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ip })
     });
     const data = await response.json();
-    // Retornamos un objeto con alive y time
     return {
       alive: data.alive,
       time: data.time !== null ? data.time : 999
@@ -24,29 +25,25 @@ function isValidIP(ip) {
   return ipv4Regex.test(ip);
 }
 
-const addButton = document.querySelector('.add_button');
-let tarjeta = 0;
+// Lista de servidores iniciales
+const ipsIniciales = {
+  "salida internet": "8.8.8.8",
+  "Contpaq 2": "192.168.1.202",
+  "Contpaq 1": "192.168.0.3",
+  "Fortia": "192.168.1.229",
 
-addButton.addEventListener('click', async () => {
-  const ip = prompt("Introduce la dirección IP o hostname del servidor:");
-  if (!ip) return alert("No se ingresó ninguna IP.");
+};
 
-  if (!isValidIP(ip)) {
-    alert("Dirección IP inválida. Debe tener el formato XXX.XXX.XXX.XXX");
-    return;
-  }
-
-  const ipNombre = prompt("Ingresa el nombre del servidor (opcional):");
-
-  // 1️⃣ Insertar tarjeta
+// Función para crear tarjeta de monitoreo
+async function crearTarjeta(ip, ipNombre = "") {
+  // 1️⃣ Insertar tarjeta desde plantilla
   const response = await fetch("partials/card.html");
   const template = await response.text();
   document.querySelector(".body_container").insertAdjacentHTML("beforeend", template);
 
-  const header = document.getElementsByClassName('chart_container_header')[tarjeta];
-  header.innerHTML = `ping: ${ip} | Estado: ...`;
-
-  const container = document.getElementsByClassName('chart_container_body')[tarjeta];
+  const containerEl = document.querySelector(".body_container").lastElementChild;
+  const header = containerEl.querySelector('.chart_container_header');
+  const container = containerEl.querySelector('.chart_container_body');
   const canvas = container.querySelector("canvas");
   const ctx = canvas.getContext("2d");
 
@@ -74,13 +71,12 @@ addButton.addEventListener('click', async () => {
   // 2️⃣ Ping en vivo
   let time = 0;
   const interval = setInterval(async () => {
-    const result = await getPing(ip); // { alive, time }
+    const result = await getPing(ip);
     time++;
 
     chart.data.labels.push(`${result.time} ms`);
     chart.data.datasets[0].data.push(result.time);
 
-    // Mantener últimos 20 puntos
     if (chart.data.labels.length > 15) {
       chart.data.labels.shift();
       chart.data.datasets[0].data.shift();
@@ -89,32 +85,46 @@ addButton.addEventListener('click', async () => {
 
     // Semáforo según latencia
     if (!result.alive) {
-        semaforo.style.backgroundColor = "red"; // no disponible = rojo
+      semaforo.style.backgroundColor = "red";       // no disponible
     } else if (result.time <= 350) {
-        semaforo.style.backgroundColor = "green";
-    } else if (result.time > 350 && result.time <= 800) {
-        semaforo.style.backgroundColor = "yellow";
+      semaforo.style.backgroundColor = "green";     // bueno
+    } else if (result.time <= 800) {
+      semaforo.style.backgroundColor = "yellow";    // medio
     } else {
-        semaforo.style.backgroundColor = "orange"; // latencia alta
+      semaforo.style.backgroundColor = "orange";    // alto
     }
 
-    // Actualizar header con disponibilidad
-    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"} | ${ipNombre} `;
-
- if (!result.alive) {
-    header.style.backgroundColor = "red"; // No disponible
-} else {
-    header.style.backgroundColor = "rgb(71, 38, 14)"; // color original si está disponible
-}
-
+    // Header con disponibilidad
+    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"} | ${ipNombre}`;
+    header.style.backgroundColor = result.alive ? "rgb(71, 38, 14)" : "red";
   }, 1000);
 
-  // Botón eliminar
-  const removeBtn = document.getElementsByClassName('remove_button')[tarjeta];
+  // 3️⃣ Botón eliminar
+  const removeBtn = containerEl.querySelector('.remove_button');
   removeBtn.addEventListener('click', () => {
     clearInterval(interval);
-    removeBtn.closest('.chart_container').remove();
+    containerEl.remove();
   });
+}
 
-  tarjeta++;
+// 4️⃣ Cargar servidores iniciales al iniciar
+window.addEventListener("DOMContentLoaded", () => {
+  for (const [nombre, ip] of Object.entries(ipsIniciales)) {
+    crearTarjeta(ip, nombre);
+  }
+});
+
+// 5️⃣ Botón para añadir servidores manualmente
+const addButton = document.querySelector('.add_button');
+addButton.addEventListener('click', async () => {
+  const ip = prompt("Introduce la dirección IP del servidor:");
+  if (!ip) return alert("No se ingresó ninguna IP.");
+
+  if (!isValidIP(ip)) {
+    alert("Dirección IP inválida. Debe tener el formato XXX.XXX.XXX.XXX");
+    return;
+  }
+
+  const ipNombre = prompt("Ingresa el nombre del servidor (opcional):");
+  crearTarjeta(ip, ipNombre);
 });

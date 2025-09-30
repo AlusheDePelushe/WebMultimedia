@@ -28,10 +28,10 @@ function isValidIP(ip) {
 // Lista de servidores iniciales
 const ipsIniciales = {
   "salida internet": "8.8.8.8",
-  "Contpaq 2": "192.168.1.202",
+  "Megacable": "177.231.5.169",
+  "Alestra": "192.18.4.32",
   "Contpaq 1": "192.168.0.3",
-  "Fortia": "192.168.1.229",
-
+  "Contpaq 2": "192.168.0.11"
 };
 
 // Función para crear tarjeta de monitoreo
@@ -95,7 +95,7 @@ async function crearTarjeta(ip, ipNombre = "") {
     }
 
     // Header con disponibilidad
-    header.innerHTML = `ping: ${ip} | Estado: ${result.alive ? "Disponible" : "No disponible"} | ${ipNombre}`;
+    header.innerHTML = `${ip}  ${result.alive ? "" : ""} | ${ipNombre}`;
     header.style.backgroundColor = result.alive ? "rgb(71, 38, 14)" : "red";
   }, 1000);
 

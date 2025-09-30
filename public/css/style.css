@@ -49,7 +49,7 @@ button{
 
 .body_container{    
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); /* columnas flexibles */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* columnas flexibles */
     grid-auto-rows: 1fr; /* filas iguales de altura automática */
     gap: 10px;
     padding: 1rem;

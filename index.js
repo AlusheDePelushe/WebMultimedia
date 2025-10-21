@@ -39,12 +39,19 @@ app.post('/ping', async (req, res) => {
   }
 });
 
-// --- Iniciar servidor ---
+//--- Iniciar servidor en render.com---
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor WebMultimedia corriendo en el puerto ${PORT}`);
+});
+
+/* --- Iniciar servidor ---
 const port = 3000;
 app.listen(port, () => {
   console.log(`Servidor ping corriendo en http://localhost:${port}`);
   //sendTelegramMessage("🚀 Servidor iniciado correctamente");
 });
+*/
 
 // Opción si quieres exponer en toda la red
 // app.listen(port, '0.0.0.0', () => console.log(`Servidor corriendo en http://<IP>:${port}`));

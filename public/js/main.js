@@ -1,7 +1,8 @@
 // Función para obtener ping
 async function getPing(ip) {
   try {
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+    //const baseUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
+    const baseUrl = window.location.origin; //Variable para render.com
 
     const response = await fetch(`${baseUrl}/ping`, {
       method: 'POST',
@@ -81,7 +82,9 @@ async function crearTarjeta(ip, ipNombre = "") {
       chart.data.labels.shift();
       chart.data.datasets[0].data.shift();
     }
-    chart.update();
+    //chart.update();
+    chart.update('none'); //cambio para render.com
+
 
     // Semáforo según latencia
     if (!result.alive) {
@@ -97,7 +100,8 @@ async function crearTarjeta(ip, ipNombre = "") {
     // Header con disponibilidad
     header.innerHTML = `${ip}  ${result.alive ? "" : ""} | ${ipNombre}`;
     header.style.backgroundColor = result.alive ? "rgb(71, 38, 14)" : "red";
-  }, 1000);
+  //}, 1000);
+  }, 3000); // parqa correr cada 3 segundos
 
   // 3️⃣ Botón eliminar
   const removeBtn = containerEl.querySelector('.remove_button');

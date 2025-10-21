@@ -1,23 +1,8 @@
-// Función para obtener ping
-async function getPing(ip) {
-  try {
-    //const baseUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
-    const baseUrl = window.location.origin; //Variable para render.com
-
-    const response = await fetch(`${baseUrl}/ping`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ip })
-    });
-    const data = await response.json();
-    return {
-      alive: data.alive,
-      time: data.time !== null ? data.time : 999
-    };
-  } catch (err) {
-    console.error('Error ping:', err);
-    return { alive: false, time: 999 };
-  }
+// Función para generar "ping" aleatorio
+function getPing(ip) {
+  const alive = Math.random() > 0.1;              // 90% chance de estar vivo
+  const time = alive ? Math.floor(Math.random() * 500) : 999; // Latencia 0-500ms
+  return { alive, time };
 }
 
 // Validación IPv4
@@ -28,16 +13,13 @@ function isValidIP(ip) {
 
 // Lista de servidores iniciales
 const ipsIniciales = {
-  "salida internet": "8.8.8.8",
-  "Megacable": "177.231.5.169",
-  "Alestra": "192.18.4.32",
-  "Contpaq 1": "192.168.0.3",
-  "Contpaq 2": "192.168.0.11"
+  "Servidor 1": "demo1",
+  "Servidor 2": "demo2",
+  "Servidor 3": "demo3"
 };
 
 // Función para crear tarjeta de monitoreo
 async function crearTarjeta(ip, ipNombre = "") {
-  // 1️⃣ Insertar tarjeta desde plantilla
   const response = await fetch("partials/card.html");
   const template = await response.text();
   document.querySelector(".body_container").insertAdjacentHTML("beforeend", template);
@@ -69,11 +51,9 @@ async function crearTarjeta(ip, ipNombre = "") {
 
   const semaforo = container.querySelector(".semaforo");
 
-  // 2️⃣ Ping en vivo
-  let time = 0;
-  const interval = setInterval(async () => {
-    const result = await getPing(ip);
-    time++;
+  // Ping "simulado"
+  const interval = setInterval(() => {
+    const result = getPing(ip);
 
     chart.data.labels.push(`${result.time} ms`);
     chart.data.datasets[0].data.push(result.time);
@@ -82,28 +62,19 @@ async function crearTarjeta(ip, ipNombre = "") {
       chart.data.labels.shift();
       chart.data.datasets[0].data.shift();
     }
-    //chart.update();
-    chart.update('none'); //cambio para render.com
+    chart.update('none');
 
+    // Semáforo
+    if (!result.alive) semaforo.style.backgroundColor = "red";
+    else if (result.time <= 350) semaforo.style.backgroundColor = "green";
+    else if (result.time <= 800) semaforo.style.backgroundColor = "yellow";
+    else semaforo.style.backgroundColor = "orange";
 
-    // Semáforo según latencia
-    if (!result.alive) {
-      semaforo.style.backgroundColor = "red";       // no disponible
-    } else if (result.time <= 350) {
-      semaforo.style.backgroundColor = "green";     // bueno
-    } else if (result.time <= 800) {
-      semaforo.style.backgroundColor = "yellow";    // medio
-    } else {
-      semaforo.style.backgroundColor = "orange";    // alto
-    }
-
-    // Header con disponibilidad
-    header.innerHTML = `${ip}  ${result.alive ? "" : ""} | ${ipNombre}`;
+    header.innerHTML = `${ip} | ${ipNombre}`;
     header.style.backgroundColor = result.alive ? "rgb(71, 38, 14)" : "red";
-  //}, 1000);
-  }, 3000); // parqa correr cada 3 segundos
+  }, 1500);
 
-  // 3️⃣ Botón eliminar
+  // Botón eliminar
   const removeBtn = containerEl.querySelector('.remove_button');
   removeBtn.addEventListener('click', () => {
     clearInterval(interval);
@@ -111,14 +82,14 @@ async function crearTarjeta(ip, ipNombre = "") {
   });
 }
 
-// 4️⃣ Cargar servidores iniciales al iniciar
+// Inicializar tarjetas
 window.addEventListener("DOMContentLoaded", () => {
   for (const [nombre, ip] of Object.entries(ipsIniciales)) {
     crearTarjeta(ip, nombre);
   }
 });
 
-// 5️⃣ Botón para añadir servidores manualmente
+// Botón para añadir servidores manualmente
 const addButton = document.querySelector('.add_button');
 addButton.addEventListener('click', async () => {
   const ip = prompt("Introduce la dirección IP del servidor:");

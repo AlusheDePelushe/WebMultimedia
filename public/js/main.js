@@ -1,6 +1,10 @@
+// ------------------------
+// script.js (versión demo)
+// ------------------------
+
 // Función para generar "ping" aleatorio
 function getPing(ip) {
-  const alive = Math.random() > 0.1;              // 90% chance de estar vivo
+  const alive = Math.random() > 0.1; // 90% chance de estar vivo
   const time = alive ? Math.floor(Math.random() * 500) : 999; // Latencia 0-500ms
   return { alive, time };
 }
@@ -11,11 +15,11 @@ function isValidIP(ip) {
   return ipv4Regex.test(ip);
 }
 
-// Lista de servidores iniciales
+// Lista de servidores iniciales para demo
 const ipsIniciales = {
-  "Servidor 1": "demo1",
-  "Servidor 2": "demo2",
-  "Servidor 3": "demo3"
+  "Google DNS": "8.8.8.8",
+  "Cloudflare DNS": "1.1.1.1",
+  "OpenDNS": "208.67.222.222"
 };
 
 // Función para crear tarjeta de monitoreo
@@ -51,7 +55,7 @@ async function crearTarjeta(ip, ipNombre = "") {
 
   const semaforo = container.querySelector(".semaforo");
 
-  // Ping "simulado"
+  // Intervalo de actualización simulado
   const interval = setInterval(() => {
     const result = getPing(ip);
 
@@ -64,7 +68,7 @@ async function crearTarjeta(ip, ipNombre = "") {
     }
     chart.update('none');
 
-    // Semáforo
+    // Semáforo según latencia
     if (!result.alive) semaforo.style.backgroundColor = "red";
     else if (result.time <= 350) semaforo.style.backgroundColor = "green";
     else if (result.time <= 800) semaforo.style.backgroundColor = "yellow";
@@ -72,7 +76,7 @@ async function crearTarjeta(ip, ipNombre = "") {
 
     header.innerHTML = `${ip} | ${ipNombre}`;
     header.style.backgroundColor = result.alive ? "rgb(71, 38, 14)" : "red";
-  }, 1500);
+  }, 1500); // cada 1.5 segundos
 
   // Botón eliminar
   const removeBtn = containerEl.querySelector('.remove_button');
@@ -82,7 +86,7 @@ async function crearTarjeta(ip, ipNombre = "") {
   });
 }
 
-// Inicializar tarjetas
+// Inicializar tarjetas al cargar la página
 window.addEventListener("DOMContentLoaded", () => {
   for (const [nombre, ip] of Object.entries(ipsIniciales)) {
     crearTarjeta(ip, nombre);
